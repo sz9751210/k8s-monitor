@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-demo
+  labels:
+    env: dev
+spec:
+  template:
+    spec:
+      containers:
+        - name: hello-world
+          livenessProbe:
+            httpGet:
+              httpHeaders:
+                - name: Host
+                  value: hello.dev
+          readinessProbe:
+            httpGet:
+              httpHeaders:
+                - name: Host
+                  value: hello.dev
+          env:
+            - name: DOMAIN_NAME
+              value: "hello.dev"

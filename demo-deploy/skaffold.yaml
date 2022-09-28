@@ -1,0 +1,25 @@
+apiVersion: skaffold/v2beta29
+kind: Config
+metadata:
+  name: hello-world
+build:
+  artifacts:
+    - image: alan/hello-demo
+      context: app
+      docker:
+        dockerfile: Dockerfile
+deploy:
+  kustomize:
+    paths:
+      - k8s/overlays/dev
+profiles:
+  - name: prod
+    deploy:
+      kustomize:
+        paths:
+          - k8s/overlays/prod
+  - name: staging
+    deploy:
+      kustomize:
+        paths:
+          - k8s/overlays/staging

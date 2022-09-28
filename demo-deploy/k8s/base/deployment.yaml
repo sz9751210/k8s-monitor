@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: nginx
+  name: hello-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: "/metrics"
+        prometheus.io/port: "9101"
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - image: alan/hello-demo
+          name: hello-world
+          ports:
+            - containerPort: 80
+          env:
+            - name: DOMAIN_NAME
+              value: "hello.world"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+              httpHeaders:
+                - name: Host
+                  value: hello.world
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+              httpHeaders:
+                - name: Host
+                  value: hello.world
+          resources:
+            limits:
+              cpu: "40m"
+            requests:
+              cpu: "20m"
+        - name: node-exporter
+          image: prom/node-exporter:v1.3.1
+          args:
+            - --web.listen-address=0.0.0.0:9101
+            - --collector.tcpstat
+          ports:
+            - containerPort: 9101
+          resources:
+            limits:
+              cpu: "100m"

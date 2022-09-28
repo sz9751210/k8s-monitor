@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-ca
+  namespace: kube-ops
+data:
+  ca.crt:
